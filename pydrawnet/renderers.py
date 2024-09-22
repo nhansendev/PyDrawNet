@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 
-import layers
-import operations
+from pydrawnet.layers import Layer1DDiagonal
 
 # For <text_kwargs> options see: https://matplotlib.org/stable/users/explain/text/text_props.html
+# For <line_kwargs> options see: https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.LineCollection
 
 
 class SeqRenderer:
@@ -91,7 +91,7 @@ class SeqRenderer:
                         va = "bottom"
                     else:
                         Y = c.Y - text_y_offset
-                        if not isinstance(c, layers.Layer1DDiagonal):
+                        if not isinstance(c, Layer1DDiagonal):
                             Y += c.height
                         va = "top"
 
@@ -109,7 +109,7 @@ class SeqRenderer:
                         va = "top"
                     else:
                         Y = c.Y + text_y_offset
-                        if not isinstance(c, layers.Layer1DDiagonal):
+                        if not isinstance(c, Layer1DDiagonal):
                             Y += c.height
                         va = "bottom"
 
@@ -135,18 +135,14 @@ class SeqRenderer:
                             va = "bottom"
                         else:
                             Y = self.collections[i].Y - self.collections[i].tot_height
-                            if not isinstance(
-                                self.collections[i], layers.Layer1DDiagonal
-                            ):
+                            if not isinstance(self.collections[i], Layer1DDiagonal):
                                 Y += self.collections[i].height
 
                             Y2 = (
                                 self.collections[i + 1].Y
                                 - self.collections[i + 1].tot_height
                             )
-                            if not isinstance(
-                                self.collections[i + 1], layers.Layer1DDiagonal
-                            ):
+                            if not isinstance(self.collections[i + 1], Layer1DDiagonal):
                                 Y2 += self.collections[i + 1].height
 
                             Ypos = min(Y, Y2) - text_y_offset
@@ -166,15 +162,11 @@ class SeqRenderer:
                             va = "top"
                         else:
                             Y = self.collections[i].Y
-                            if not isinstance(
-                                self.collections[i], layers.Layer1DDiagonal
-                            ):
+                            if not isinstance(self.collections[i], Layer1DDiagonal):
                                 Y += self.collections[i].height
 
                             Y2 = self.collections[i + 1].Y
-                            if not isinstance(
-                                self.collections[i + 1], layers.Layer1DDiagonal
-                            ):
+                            if not isinstance(self.collections[i + 1], Layer1DDiagonal):
                                 Y2 += self.collections[i + 1].height
 
                             Ypos = max(Y, Y2) + text_y_offset

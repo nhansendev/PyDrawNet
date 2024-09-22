@@ -1,4 +1,5 @@
-from pydrawnet import SeqRenderer, layers, operations
+from pydrawnet.renderers import SeqRenderer
+from pydrawnet import layers, operations
 
 """ Demonstrating a generic 2D convolutional network with limited channel displays for compactness and linear layers on the end """
 

@@ -1,9 +1,9 @@
 # PyDrawNet
 A python utility for plotting neural network (and other) diagrams
 
-![DenseEx1](dense_example.png)
-![ConvEx1](conv_example.png)
-![BlockEx1](block_example.png)
+![DenseEx1](examples/dense_example.png)
+![ConvEx1](examples/conv_example.png)
+![BlockEx1](examples/block_example.png)
 
 Example files have been created to demonstrate the capabilities of the project.
 
@@ -23,10 +23,18 @@ Operations are classes that create connections between layers, such as convoluti
 ##### Renderers
 Currently only a sequential renderer class (SeqRenderer) is implemented, which works as follows: layers are rendered one after another from left to right, with operations connecting adjacent layers (no skip-connections). Normally, the renderer calls `plt.show`, but this can be disabled to allow further customization outside of its capabilites.
 
-### Usage
+### Installation
+From within pydrawnet folder:
+`pip install .`
+
+To uninstall:
+`pip uninstall pydrawnet`
+
+### Basic Usage
 
 ```
-from pydrawnet import SeqRenderer, layers, operations
+from pydrawnet.renderers import SeqRenderer
+from pydrawnet import layers, operations
 
 # The renderer must first be created
 SR = SeqRenderer()
@@ -41,7 +49,7 @@ SR.add_layer(layers.BlockLayer(50, 10))
 SR.add_operation(operations.LinearOp())
 SR.add_layer(layers.BlockLayer(50, 75))
 
-# This is equivalent to:
+# --- This is equivalent to: ---
 # SR.add_layer(layers.BlockLayer(50, 50))
 # SR.add_layer(layers.BlockLayer(10, 50))
 # SR.add_layer(layers.BlockLayer(50, 10))

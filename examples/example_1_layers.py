@@ -1,4 +1,5 @@
-from pydrawnet import SeqRenderer, layers
+from pydrawnet.renderers import SeqRenderer
+from pydrawnet import layers
 import math
 
 """ Demonstrating examples of each type of layer """
