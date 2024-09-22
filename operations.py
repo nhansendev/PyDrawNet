@@ -149,7 +149,7 @@ class DenseOp:
         numB: int = 1,
         label: str = "Dense",
         loc: str = "below",
-        limited_ends: int | None = None,
+        limited_ends: int | tuple | None = None,
         line_kwargs: dict | None = None,
         text_kwargs: dict | None = None,
     ) -> None:
@@ -164,7 +164,7 @@ class DenseOp:
             A brief description of the operation
         loc : str
             The location of the label, either 'above' or 'below'
-        limited_ends : int | None
+        limited_ends : int | tuple | None
             If not None, then only add connections for at most the top/bottom
             <limited_ends> # of features
         line_kwargs : dict | None
@@ -221,27 +221,41 @@ class DenseOp:
         baseX1 = X1 + ivalAX / 2
         baseX2 = X2 + ivalBX / 2
 
+        if self.limited_ends is None:
+            irange = range(self.numA)
+            jrange = range(self.numB)
+        elif isinstance(self.limited_ends, list) or isinstance(
+            self.limited_ends, tuple
+        ):
+            if self.limited_ends[0] is None:
+                irange = range(self.numA)
+            else:
+                irange = list(range(self.limited_ends[0])) + list(
+                    range(self.numA - self.limited_ends[0], self.numA)
+                )
+            if self.limited_ends[1] is None:
+                jrange = range(self.numB)
+            else:
+                jrange = list(range(self.limited_ends[1])) + list(
+                    range(self.numB - self.limited_ends[1], self.numB)
+                )
+        else:
+            irange = list(range(self.limited_ends)) + list(
+                range(self.numA - self.limited_ends, self.numA)
+            )
+            jrange = list(range(self.limited_ends)) + list(
+                range(self.numB - self.limited_ends, self.numB)
+            )
+
         segments = []
-        for i in range(self.numA):
-            # Connections may be limited the to top/bottom # <limited_ends>
-            if (
-                self.limited_ends is None
-                or i < self.limited_ends
-                or i > self.numA - self.limited_ends - 1
-            ):
-                for j in range(self.numB):
-                    # Connections may be limited the to top/bottom # <limited_ends>
-                    if (
-                        self.limited_ends is None
-                        or j < self.limited_ends
-                        or j > self.numB - self.limited_ends - 1
-                    ):
-                        segments.append(
-                            [
-                                (baseX1 + ivalAX * i, baseY1 - ivalAY * i),
-                                (baseX2 + ivalBX * j, baseY2 - ivalBY * j),
-                            ]
-                        )
+        for i in irange:
+            for j in jrange:
+                segments.append(
+                    [
+                        (baseX1 + ivalAX * i, baseY1 - ivalAY * i),
+                        (baseX2 + ivalBX * j, baseY2 - ivalBY * j),
+                    ]
+                )
 
         self.text_X = (X1_2 + X2_2) / 2
         return LineCollection(

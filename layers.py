@@ -247,11 +247,11 @@ class Layer1D(BaseLayer):
     def __init__(
         self,
         features: int = 9,
-        diameter: float = 10,
+        diameter: float = 1,
         label: str = "Features",
         fill_color: tuple = (0.9, 0.9, 0.9),
         limited: int = 0,
-        limited_radius: float = 5,
+        limited_radius: float = 0.25,
         skip_ival: int = 1,
         end_features: int = 5,
         shape_spacing: float = 0,
@@ -840,3 +840,72 @@ class PolyLayer(BaseLayer):
         patches = [Polygon([(x + self.X, y + self.Y) for x, y in self.coords])]
         colors = [self.fill_color]
         return PatchCollection(patches, ec="k", fc=colors)
+
+
+class ImageLayer(BaseLayer):
+    """For adding single image visualizations"""
+
+    def __init__(
+        self,
+        imgpath,
+        width: float = 100,
+        height: float = 100,
+        label: str = "Image",
+        loc: str = "above",
+        X: float = 0,
+        Y: float | str = "auto",
+        text_kwargs: dict | None = None,
+    ) -> None:
+        """
+        Parameters
+        ----------
+        width : int
+            Width of the base rectangle
+        height : int
+            Height of the base rectangle
+        label : str
+            Briefly describes the graphic
+        X : float
+            The location of the leftmost edge of base rectangle
+        Y : float (default: 'auto')
+            The location of the bottom edge of the base rectangle.
+            Specifying 'auto' will place the entire graphic symmetrically
+            about 0
+        text_kwargs : dict, or None (default)
+            Keyword arguments to be passed to matplotlib Text object
+        """
+        super().__init__(X, Y, width, height, loc, text_kwargs)
+
+        self.text = label
+
+        self.tot_width = width
+        self.tot_height = height
+
+        if Y == "auto":
+            self.Y = -self.height / 2
+
+    def calc_overall_sizes(self):
+        """Unused"""
+
+    def get_corners(self):
+        """Used to find attachment points for operation visualizations
+
+        Returns (x, y) coordinates in format: (Top Left, Top Right, Bottom Left, Bottom Right)
+        """
+        corners = [
+            (self.X, self.Y + self.height),
+            (self.X + self.width, self.Y + self.height),
+            (self.X, self.Y),
+            (self.X + self.width, self.Y),
+        ]
+        return corners
+
+    def make_collection(self):
+        """Generates a PatchCollection containing all graphics to be drawn other than text"""
+        self.patches = [Rectangle((self.X, self.Y), self.width, self.height)]
+        self.colors = [self.fill_color]
+        return PatchCollection(
+            self.patches,
+            ec="k",
+            fc=self.colors,
+        )
