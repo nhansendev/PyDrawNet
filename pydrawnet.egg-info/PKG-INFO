@@ -1,0 +1,21 @@
+Metadata-Version: 2.1
+Name: pydrawnet
+Version: 0.1.0
+Summary: A utility for drawing neural network and other diagrams
+Home-page: https://github.com/nhansendev/PyDrawNet
+Author: Nathan Hansen
+Author-email: nato5342@hotmail.com
+License: BSD 3-clause
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: Microsoft :: Windows :: Windows 10
+Classifier: Topic :: Scientific/Engineering :: Visualization
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.14
+License-File: LICENSE
+Requires-Dist: matplotlib
