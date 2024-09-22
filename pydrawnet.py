@@ -6,8 +6,8 @@ import operations
 # For <text_kwargs> options see: https://matplotlib.org/stable/users/explain/text/text_props.html
 
 
-class NetGraph:
-    """Builds and renders a visualization of the network"""
+class SeqRenderer:
+    """Builds and renders a sequential visualization of the network"""
 
     def __init__(self, axs=None) -> None:
         """

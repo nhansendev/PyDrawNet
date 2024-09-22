@@ -1,9 +1,9 @@
-from pydrawnet import NetGraph, layers, operations
+from pydrawnet import SeqRenderer, layers, operations
 
 """ Demonstrating a generic Dense/Linear network with some of the available parameter variations """
 
-NG = NetGraph()
-NG.add_layer(
+SR = SeqRenderer()
+SR.add_layer(
     layers.Layer1D(
         30,
         1,
@@ -14,13 +14,13 @@ NG.add_layer(
         end_features=3,
     )
 )
-NG.add_operation(operations.DenseOp(10, 5, "Dense", limited_ends=3))
-NG.add_layer(
+SR.add_operation(operations.DenseOp(10, 5, "Dense", limited_ends=3))
+SR.add_layer(
     layers.Layer1D(5, 2, "Features", shape_spacing=0.5, fill_color=(0.5, 0.9, 0))
 )
-NG.add_operation(operations.DenseOp(5, 8, "Dense"))
-NG.add_layer(layers.Layer1D(8, 1, "Features", shape_spacing=3, fill_color=(1, 0, 0)))
-NG.add_operation(operations.DenseOp(8, 20, "Dense"))
-NG.add_layer(layers.Layer1D(20, 1, "Features", shape_spacing=0.5))
+SR.add_operation(operations.DenseOp(5, 8, "Dense"))
+SR.add_layer(layers.Layer1D(8, 1, "Features", shape_spacing=3, fill_color=(1, 0, 0)))
+SR.add_operation(operations.DenseOp(8, 20, "Dense"))
+SR.add_layer(layers.Layer1D(20, 1, "Features", shape_spacing=0.5))
 
-NG.render(10, text_y_offset=1)
+SR.render(10, text_y_offset=1)

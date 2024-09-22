@@ -1,28 +1,28 @@
-from pydrawnet import NetGraph, layers, operations
+from pydrawnet import SeqRenderer, layers, operations
 
 """ Demonstrating the option to arbitrarily combine operations between layers """
 
-NG = NetGraph()
+SR = SeqRenderer()
 
 kernel = (16, 16)
-NG.add_layer(layers.Layer2D(3, 60, 60, "Input"))
-NG.add_operation(
+SR.add_layer(layers.Layer2D(3, 60, 60, "Input"))
+SR.add_operation(
     [
         operations.LinearOp("Transform"),
         operations.ArrowOp(""),
     ]
 )
-NG.add_layer(
+SR.add_layer(
     layers.Layer2D(16, 30, 30, "", limited=8, end_channels=2, skip_ival=1, cspace=5)
 )
-NG.add_operation(
+SR.add_operation(
     [
         operations.LinearOp(""),
         operations.Conv2dOp(),
         operations.ArrowOp(""),
     ]
 )
-NG.add_layer(
+SR.add_layer(
     layers.Layer2D(
         32,
         15,
@@ -35,4 +35,4 @@ NG.add_layer(
         limited_radius=3,
     )
 )
-NG.render(50, ymargin=0.25)
+SR.render(50, ymargin=0.25)
