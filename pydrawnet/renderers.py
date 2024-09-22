@@ -1,3 +1,10 @@
+# Copyright (c) 2024, Nathan Hansen
+# All rights reserved.
+
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
+
 import matplotlib.pyplot as plt
 
 from pydrawnet.layers import Layer1DDiagonal
