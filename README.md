@@ -8,10 +8,8 @@ A python utility for plotting neural network (and other) diagrams
 Example files have been created to demonstrate the capabilities of the project.
 
 ### Requirements
-- python 3+
-    - tested on 3.12 only
-- matplotlib
-    - tested on 3.8.1 only
+- python 3+ (tested on 3.12 only)
+- matplotlib (tested on 3.8.1 only)
 
 ### How It Works
 ##### Layers
@@ -25,10 +23,14 @@ Currently only a sequential renderer class (SeqRenderer) is implemented, which w
 
 ### Installation
 From within pydrawnet folder:
-`pip install .`
+```
+pip install .
+```
 
 To uninstall:
-`pip uninstall pydrawnet`
+```
+pip uninstall pydrawnet
+```
 
 ### Basic Usage
 
@@ -46,18 +48,13 @@ SR.add_operation(operations.ArrowOp())
 SR.add_layer(layers.BlockLayer(10, 50))
 SR.add_operation(operations.ArrowOp())
 SR.add_layer(layers.BlockLayer(50, 10))
-SR.add_operation(operations.LinearOp())
-SR.add_layer(layers.BlockLayer(50, 75))
 
 # --- This is equivalent to: ---
 # SR.add_layer(layers.BlockLayer(50, 50))
 # SR.add_layer(layers.BlockLayer(10, 50))
 # SR.add_layer(layers.BlockLayer(50, 10))
-# SR.add_layer(layers.BlockLayer(50, 75))
-
 # SR.add_operation(operations.ArrowOp())
 # SR.add_operation(operations.ArrowOp())
-# SR.add_operation(operations.LinearOp())
 
 # Plot the resulting graphic
 SR.render()
