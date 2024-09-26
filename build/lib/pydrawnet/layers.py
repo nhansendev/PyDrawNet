@@ -999,6 +999,7 @@ class PlotLayer(BaseLayer):
         self.update_position()
 
     def update_position(self):
+        # set_position doesn't work with inset_axes, so use this hack instead
         inset_locator = _TransformedBoundsLocator(
             (self.X, self.Y, self.width, self.height), self.transform
         )

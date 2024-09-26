@@ -60,8 +60,10 @@ class BaseRenderer:
 
         return xmin - xofst, xmax + xofst, ymin - yofst, ymax + yofst
 
-    def make_figure(self):
+    def make_figure(self, size=None):
         self.fig, ax = plt.subplots()
+        if size is not None:
+            self.fig.set_size_inches(size)
         self.axs = self.fig.axes[0]
 
     def add_layer(self, layer):
