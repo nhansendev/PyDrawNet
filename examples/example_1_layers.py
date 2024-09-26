@@ -5,6 +5,7 @@ import math
 """ Demonstrating examples of each type of layer """
 
 SR = SeqRenderer()
+SR.make_figure()
 
 kernel = (8, 16)
 SR.add_layer(layers.Layer2D(20, 16, 40, "Layer2D", cspace=5))
@@ -68,5 +69,12 @@ SR.add_layer(layers.BlockLayer(5, 90, fill_color=(0.9, 0.8, 0.7)))
 X = [100 * math.cos(-0.5 + i / 10) ** 3 - 70 for i in range(11)]
 Y = [50 * math.sin(-0.5 + i / 10) for i in range(11)]
 SR.add_layer(layers.PolyLayer(list(zip(X, Y))))
+
+SR.add_layer(layers.ImageLayer("examples//dense_example.png", 100, 60))
+
+tmp = layers.PlotLayer(SR.axs)
+tmp.axs.plot([1, 2, 3], [1, 2, 1], ".-")
+tmp.axs.grid()
+SR.add_layer(tmp)
 
 SR.render(75, 150, ymargin=0.25)

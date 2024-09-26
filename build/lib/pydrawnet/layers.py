@@ -6,17 +6,9 @@
 
 from matplotlib.collections import PatchCollection
 from matplotlib.pyplot import imread
+from matplotlib.axes._base import _TransformedBoundsLocator
 from matplotlib.patches import Rectangle, Circle, Polygon
-from enum import Enum
-
-COLOR_LIGHT = (0.7, 0.7, 0.7)
-COLOR_DARK = (0.4, 0.4, 0.4)
-
-
-class RenderTypes(Enum):
-    Collection = 1
-    Image = 2
-    Plot = 3
+from matplotlib.image import AxesImage
 
 
 class BaseLayer:
@@ -78,8 +70,8 @@ class Layer2D(BaseLayer):
         X: float = 0,
         Y: float | str = "auto",
         text_kwargs: dict | None = None,
-        color_dark: tuple = COLOR_DARK,
-        color_light: tuple = COLOR_LIGHT,
+        color_dark: tuple = (0.4, 0.4, 0.4),
+        color_light: tuple = (0.7, 0.7, 0.7),
     ) -> None:
         """
         Parameters
@@ -125,8 +117,6 @@ class Layer2D(BaseLayer):
             defined by a 3-tuple of floats in the range 0-1
         """
         super().__init__(X, Y, width, height, loc, text_kwargs)
-        self.render_type = RenderTypes.Collection
-
         assert channels > 0
         assert (
             limited >= 0 and limited < channels
@@ -314,8 +304,6 @@ class Layer1D(BaseLayer):
             Keyword arguments to be passed to matplotlib Text object
         """
         super().__init__(X, Y, diameter, diameter, loc, text_kwargs)
-        self.render_type = RenderTypes.Collection
-
         assert diameter > 0
         assert (
             limited >= 0 and limited < features
@@ -501,8 +489,6 @@ class Layer1DRect(BaseLayer):
             Keyword arguments to be passed to matplotlib Text object
         """
         super().__init__(X, Y, width, height, loc, text_kwargs)
-        self.render_type = RenderTypes.Collection
-
         self.features = features
         self.fill_color = fill_color
         self.limited = limited
@@ -653,8 +639,6 @@ class Layer1DDiagonal(BaseLayer):
             Keyword arguments to be passed to matplotlib Text object
         """
         super().__init__(X, Y, width, height, loc, text_kwargs)
-        self.render_type = RenderTypes.Collection
-
         self.text = label
         self.fill_color = fill_color
 
@@ -734,8 +718,6 @@ class BlockLayer(BaseLayer):
             Keyword arguments to be passed to matplotlib Text object
         """
         super().__init__(X, Y, width, height, loc, text_kwargs)
-        self.render_type = RenderTypes.Collection
-
         self.text = label
         self.fill_color = fill_color
 
@@ -807,8 +789,6 @@ class PolyLayer(BaseLayer):
         width, height = self._width_height_from_coords(coords)
 
         super().__init__(X, Y, width, height, loc, text_kwargs)
-        self.render_type = RenderTypes.Collection
-
         self.coords = coords
         self.text = label
         self.fill_color = fill_color
@@ -899,8 +879,6 @@ class ImageLayer(BaseLayer):
             Keyword arguments to be passed to matplotlib Text object
         """
         super().__init__(X, Y, width, height, loc, text_kwargs)
-        self.render_type = RenderTypes.Image
-
         self.imgpath = imgpath
         self.text = label
         self.img_kwargs = img_kwargs
@@ -931,18 +909,97 @@ class ImageLayer(BaseLayer):
         return corners
 
     def make_collection(self):
-        """Returns the image to be shown along with its kwargs"""
-        if self.img_kwargs is not None:
-            if "extent" not in self.img_kwargs.keys():
-                self.img_kwargs["extent"] = (
-                    self.X,
-                    self.X + self.width,
-                    self.Y,
-                    self.Y + self.height,
-                )
+        """Returns the image to be shown"""
+        if self.img_kwargs is not None and "extent" not in self.img_kwargs.keys():
+            self.img_kwargs["extent"] = (
+                self.X,
+                self.X + self.width,
+                self.Y,
+                self.Y + self.height,
+            )
         else:
             self.img_kwargs = {
                 "extent": (self.X, self.X + self.width, self.Y, self.Y + self.height)
             }
 
-        return self.img, self.img_kwargs
+        return AxesImage(None, data=self.img, **self.img_kwargs)
+
+
+class PlotLayer(BaseLayer):
+    """For adding matplotlib plots as visualizations"""
+
+    def __init__(
+        self,
+        parent_axis,
+        width: float = 100,
+        height: float = 100,
+        label: str = "Plot",
+        loc: str = "above",
+        X: float = 0,
+        Y: float | str = "auto",
+        text_kwargs: dict | None = None,
+    ) -> None:
+        """
+        Parameters
+        ----------
+        subplot : TBD
+            TBD
+        width : int
+            Width of the base rectangle
+        height : int
+            Height of the base rectangle
+        label : str
+            Briefly describes the graphic
+        X : float
+            The location of the leftmost edge of base rectangle
+        Y : float (default: 'auto')
+            The location of the bottom edge of the base rectangle.
+            Specifying 'auto' will place the entire graphic symmetrically
+            about 0
+        text_kwargs : dict | None
+            Keyword arguments to be passed to matplotlib Text object
+        """
+        if Y == "auto":
+            Y = -height / 2
+
+        super().__init__(X, Y, width, height, loc, text_kwargs)
+        self.parent_axis = parent_axis
+
+        self.text = label
+        self.text_kwargs = text_kwargs
+
+        self.tot_width = width
+        self.tot_height = height
+
+        self.transform = self.parent_axis.transData
+
+        self.axs = self.parent_axis.inset_axes(
+            (self.X, self.Y, self.width, self.height),
+            transform=self.transform,
+        )
+
+    def calc_overall_sizes(self):
+        """Unused"""
+
+    def get_corners(self):
+        """Used to find attachment points for operation visualizations
+
+        Returns (x, y) coordinates in format: (Top Left, Top Right, Bottom Left, Bottom Right)
+        """
+        corners = [
+            (self.X, self.Y + self.height),
+            (self.X + self.width, self.Y + self.height),
+            (self.X, self.Y),
+            (self.X + self.width, self.Y),
+        ]
+        return corners
+
+    def make_collection(self):
+        """Unused"""
+        self.update_position()
+
+    def update_position(self):
+        inset_locator = _TransformedBoundsLocator(
+            (self.X, self.Y, self.width, self.height), self.transform
+        )
+        self.axs.set_axes_locator(inset_locator)
