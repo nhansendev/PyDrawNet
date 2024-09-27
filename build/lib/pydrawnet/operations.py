@@ -133,7 +133,7 @@ class Conv2dOp:
             # TL, TR, BL, BR
             _, _, _, BR = objB.get_corners()
             X2 = BR[0] - max(0.9 * objB.width, kw)
-            Y2 = BR[1] + max(0.9 * objB.height-kh, 0)
+            Y2 = BR[1] + max(0.9 * objB.height - kh, 0)
 
             colors = [self.kernel_color, self.kernel_color]
             patches = [
@@ -558,7 +558,7 @@ class ResidualOp:
         Y2 -= objB.tot_height / 2
 
         Xmid = (X1 + X2) / 2
-        Ymid = (Y2 + Y1) / 2 + self.yoffset
+        Ymid = min(Y2, Y1) + self.yoffset
 
         segments = []
 
@@ -567,14 +567,14 @@ class ResidualOp:
                 [
                     (X1, Y1),
                     (X1 + self.xoffset, Y1),
-                    (X1 + self.xoffset, Y1 + self.yoffset),
+                    (X1 + self.xoffset, Ymid),
                     (Xmid - self.arrow_size / 2, Ymid),
                 ]
             )
             segments.append(
                 [
                     (Xmid + self.arrow_size / 2, Ymid),
-                    (X2 - self.xoffset, Y2 + self.yoffset),
+                    (X2 - self.xoffset, Ymid),
                     (X2 - self.xoffset, Y2),
                     (X2, Y2),
                 ]
@@ -583,14 +583,14 @@ class ResidualOp:
             segments.append(
                 [
                     (X1 + self.xoffset, Y1),
-                    (X1 + self.xoffset, Y1 + self.yoffset),
+                    (X1 + self.xoffset, Ymid),
                     (Xmid - self.arrow_size / 2, Ymid),
                 ]
             )
             segments.append(
                 [
                     (Xmid + self.arrow_size / 2, Ymid),
-                    (X2 - self.xoffset, Y2 + self.yoffset),
+                    (X2 - self.xoffset, Ymid),
                     (X2 - self.xoffset, Y2),
                 ]
             )
